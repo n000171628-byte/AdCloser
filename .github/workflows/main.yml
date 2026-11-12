@@ -1,0 +1,29 @@
+name: Build APK
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+      - name: Locate project
+        id: loc
+        run: |
+          f=$(find . -name settings.gradle.kts -not -path './.git/*' | head -n1)
+          if [ -z "$f" ]; then echo "找不到 settings.gradle.kts，請確認檔案已上傳"; ls -R | head -50; exit 1; fi
+          echo "dir=$(dirname "$f")" >> $GITHUB_OUTPUT
+      - name: Build
+        working-directory: ${{ steps.loc.outputs.dir }}
+        run: gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AdCloser-debug-apk
+          path: "**/outputs/apk/debug/*.apk"
