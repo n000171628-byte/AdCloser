@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">彈出廣告自動關閉</string>
+    <string name="service_desc">偵測畫面上的「跳過／關閉」按鈕並自動點擊，僅處理使用者設定的規則。</string>
+</resources>
